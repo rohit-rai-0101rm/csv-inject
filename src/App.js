@@ -1,11 +1,12 @@
-import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { Gridloading } from './Components/Gridloading';
+import  React, { useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { Gridloading } from "./Components/Gridloading";
 
-import './App.css';
-import { Typography } from '@mui/material';
-import { height } from '@mui/system';
-
+import "./App.css";
+import { Typography } from "@mui/material";
+import { height } from "@mui/system";
+import csvInjectionProtector from "csv-injection-protector";
+import axios from "axios";
 
 /*const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -53,31 +54,46 @@ export default function DataTable() {
     </div>
   );
 }*/
-function  App()
-{
-  
-  //<Footer/>
-  return(
-    <div className='App'>
-    
-      <div style = {{height:200,width:'200%',overflow:"hidden"}}>
-      <img src={ require('./Materials/abc-logo.png') } style={{height:40,width:'10%'}}  />
-      <center style={{align:"center"}}> <img src={ require('./Materials/hrc-logo.png') } style={{height:40,width:'10%',}} /></center>
 
-    </div>
 
+const riskyString = "=Risky string for CSV";
+const sanitizedString = csvInjectionProtector(riskyString);
+console.log("sanitizedString",sanitizedString);
+function App() {
+  const [file,setFile]=useState('')
+  const fileHandler = (event) => {
+    let fileObj = event.target.files[0];
+    //just pass the fileObj as parameter
+    console.log(fileObj)
+    setFile(fileObj)
    
-    <div>
-        <Gridloading />
-      </div>
-        
-      <div style = {{height:60,width:'50%'}}>
-      <Typography style={{ color: 'white' }}>
-        Copyright 2022 Highradius. All Rights Reserved.
-      </Typography>
-</div>
 
-</div>
+}
+console.log(file)
+const handleSend=()=>{
+  console.log(file)
+  const { data } =  axios.post("API URL",
+  {  file },
+)
+}
+  //<Footer/>
+  return (
+    <div className="App">
+     
+                <input onChange={fileHandler} type="file" accept=".xlsx, .xls, .csv" />
+                <button onClick={handleSend} >SEND</button>
+          
+     
+
+
+
+      <div style={{ height: 60, width: "50%" }}>
+        <Typography style={{ color: "white" }}>
+          Copyright 2022 Highradius. All Rights Reserved.
+        </Typography>
+      </div>
+   
+    </div>
   );
 }
 export default App;
